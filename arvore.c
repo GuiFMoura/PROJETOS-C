@@ -47,7 +47,7 @@ void mostraArvore(Nodo *p, int nivel){
     }
 }
 
-Nodo* excluir(Nodo *p){
+Nodo* excluirFilho(Nodo *p){
     if(p == NULL)
         printf("NODO NAO EXISTE\n");
     else if(p->esq != NULL || p->dir != NULL){
@@ -134,9 +134,9 @@ int main(){
             printf("OPCAO: ");
             scanf("%d", &op);
             if(op == 1){
-                atual->esq = excluir(atual->esq);
+                atual->esq = excluirFilho(atual->esq);
             }if(op == 2){
-                atual->dir = excluir(atual->dir);
+                atual->dir = excluirFilho(atual->dir);
             }
             mostraAtual(atual);
             break;
