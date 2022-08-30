@@ -71,7 +71,8 @@ int main(){
         printf("[4]: INSERIR NOVO NODO \n");
         printf("[5]: NAVEGAR PARA A RAIZ\n");
         printf("[6]: MOSTRAR ARVORE\n");
-        printf("[7]: EXCLUIR NODO\n");
+        printf("[7]: EXCLUIR FILHO\n");
+        printf("[8]: EXCLUIR NODO\n");
         printf("[0]: SAIR \n ");
         printf("opcao: ");
         scanf("%d", &op);
@@ -140,10 +141,23 @@ int main(){
             }
             mostraAtual(atual);
             break;
+        case 8:
+            if(raiz == NULL)
+                printf("ARVORE VAZIA\n");
+            else{
+                if(atual == raiz){
+                    //EXCLUIR NODO ATUAL (FUNÇÃO RECURSIVA)
+                    raiz = NULL;
+                }else{
+                //ENCONTRA PAI DO NODO ATUAL
+                //EXCLUIR O NODO ATUAL
+                //PAI->ESQ/DIR = NULL
+                }
+            }
+            break;
         case 0:
             printf("SAIR \n");
             break;
-
         default:
             printf("OPCAO INVALIDA \n");
             break;
