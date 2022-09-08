@@ -9,7 +9,7 @@ typedef struct nodo{
 }Nodo;
 
 typedef struct fila{
-    struct fila *vatual;
+    Nodo *no;
     struct fila *prox;
 }Fila;
 
