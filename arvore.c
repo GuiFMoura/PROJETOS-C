@@ -5,13 +5,20 @@ typedef struct nodo{
    int valor;
    struct nodo *esq;
    struct nodo *dir;
+   struct nodo *pai;
 }Nodo;
+
+typedef struct fila{
+    struct fila *vatual;
+    struct fila *prox;
+}Fila;
 
 Nodo* criarNodo(int v){
    Nodo *p = (Nodo*)malloc(sizeof(Nodo));
    p->valor = v;
    p->esq = NULL;
    p->dir = NULL;
+   p->pai = NULL;
    return p;
 }
 
@@ -50,9 +57,8 @@ Nodo* excluirFilho(Nodo *p){
         printf("NODO NAO EXISTE\n");
     else if(p->esq != NULL || p->dir != NULL)
         printf("NODO NAO EH UMA FOLHA\n");
-    else{
+    else
         free(p);
-    }
     return p;
 }
 
@@ -60,26 +66,15 @@ void excluirAtual(Nodo *p){
     if(p != NULL && (p->esq != NULL || p->dir != NULL)){
         excluirAtual(p->esq);
         excluirAtual(p->dir);
-        free(p);
-    }else{
-        free(p);
+    }if(p != NULL && p->pai != NULL){
+        if(p->pai->esq == p)
+            p->pai->esq = NULL;
+        else
+            p->pai->esq = NULL;
     }
+    free(p);
 }
 
-Nodo* encontraPai(Nodo *raiz, Nodo *atual){
-    if(!raiz){
-        return NULL;
-    }else if(raiz->esq == atual || raiz->dir == atual){
-        return raiz;
-    }else{
-        Nodo *r = encontraPai(raiz->esq, atual);
-        if(r)
-            return r;
-        r = encontraPai(raiz->dir, atual);
-        if(r)
-            return r;
-    }
-}
 
 int main(){
    Nodo *raiz = NULL, *atual = NULL, *pai = NULL;
@@ -89,13 +84,14 @@ int main(){
         printf("[1]: MOSTRAR NODO ATUAL\n");
         printf("[2]: NAVEGAR PARA A ESQUERDA\n");
         printf("[3]: NAVEGAR PARA A DIREITA\n");
-        printf("[4]: INSERIR NOVO NODO \n");
+        printf("[4]: INSERIR NOVO NODO\n");
         printf("[5]: NAVEGAR PARA A RAIZ\n");
         printf("[6]: MOSTRAR ARVORE\n");
         printf("[7]: EXCLUIR FILHO\n");
         printf("[8]: EXCLUIR NODO ATUAL\n");
+        printf("[9]: SUBIR 1 NIVEL NA ARVORE\n");
         printf("[0]: SAIR\n ");
-        printf("OPCAO: ");
+        printf("\nOPCAO: ");
         scanf("%d", &op);
 
         switch (op){
@@ -130,11 +126,14 @@ int main(){
                 printf("[1]: PARA INSERIR A ESQUERDA\n");
                 printf("[2]: PARA INSERIR A DIREITA\n");
                 scanf("%d", &op);
-                if(op == 1 && atual->esq == NULL)
+                if(op == 1 && atual->esq == NULL){
                     atual->esq = criarNodo(v);
-
-                if(op == 2 && atual->dir == NULL)
+                    atual->esq->pai = atual;
+                }    
+                if(op == 2 && atual->dir == NULL){
                     atual->dir = criarNodo(v);
+                    atual->dir->pai =atual;
+                }
                 mostraAtual(atual);
             }
             break;
@@ -171,21 +170,24 @@ int main(){
                     raiz = NULL;
                     atual = NULL;
                 }else{
-                    pai = encontraPai(raiz, atual);
+                    pai = atual->pai;
                     excluirAtual(atual);
-                    if(pai->esq == atual)
-                        pai->esq = NULL;
-                    else
-                        pai->dir = NULL;
                     atual = pai;
                 }
             }
+            mostraAtual(atual);
+            break;
+        case 9:
+            if(atual && !atual->pai){
+                atual = atual->pai;
+            }
+            mostraAtual(atual);
             break;
         case 0:
-            printf("SAIR \n");
+            printf("SAIR\n");
             break;
         default:
-            printf("OPCAO INVALIDA \n");
+            printf("OPCAO INVALIDA\n");
             break;
         }
         printf("\n\n");
