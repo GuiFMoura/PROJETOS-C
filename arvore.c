@@ -8,11 +8,6 @@ typedef struct nodo{
    struct nodo *pai;
 }Nodo;
 
-typedef struct fila{
-    Nodo *no;
-    struct fila *prox;
-}Fila;
-
 Nodo* criarNodo(int v){
    Nodo *p = (Nodo*)malloc(sizeof(Nodo));
    p->valor = v;
@@ -75,9 +70,65 @@ void excluirAtual(Nodo *p){
     free(p);
 }
 
+typedef struct fila{
+    Nodo *no;
+    struct fila *prox;
+}Fila;
+
+Fila* criarFila(Nodo* novo){
+   Fila *f = (Fila*)malloc(sizeof(Fila));
+   f->no = novo;
+   f->prox = NULL;
+   return f;
+}
+
+Fila* enfileirar(Fila *f, Nodo *p){
+    if(p){
+        if(f){
+            Fila *aux = f;
+            while(aux->prox)
+                aux = aux->prox;
+            aux->prox = criarFila(p);
+        }else{
+            f = criarFila(p);
+        }
+    }
+    return f;
+}
+
+Fila* desenfileirar(Fila *f){
+    if(f){
+        Fila *aux = f;
+        f = f->prox;
+        free(aux);
+    }
+    return f;
+}
+
+Nodo* buscaLarg(Nodo* raiz, int v){
+    if(raiz){
+        Fila *f = NULL;
+        f = enfileirar(f, raiz);
+        while(f && f->no->valor != v){
+            f = enfileirar(f, f->no->esq);
+            f = enfileirar(f, f->no->dir);
+            printf("%i ->", f->no->valor);
+            f = desenfileirar(f);
+        }
+        if(f){
+            Nodo *aux = f->no;
+            printf("\nDESENFILEIRAR");
+            while(f)
+                f = desenfileirar(f);
+            return aux;
+        }else
+            return NULL;
+    }
+    return raiz;
+}
 
 int main(){
-   Nodo *raiz = NULL, *atual = NULL, *pai = NULL;
+   Nodo *raiz = NULL, *atual = NULL, *pai = NULL, *aux = NULL;
    int op, v;
 
    do{
@@ -90,6 +141,7 @@ int main(){
         printf("[7]: EXCLUIR FILHO\n");
         printf("[8]: EXCLUIR NODO ATUAL\n");
         printf("[9]: SUBIR 1 NIVEL NA ARVORE\n");
+        printf("[10]: BUSCA EM LARGURA\n");
         printf("[0]: SAIR\n ");
         printf("\nOPCAO: ");
         scanf("%d", &op);
@@ -129,7 +181,7 @@ int main(){
                 if(op == 1 && atual->esq == NULL){
                     atual->esq = criarNodo(v);
                     atual->esq->pai = atual;
-                }    
+                }
                 if(op == 2 && atual->dir == NULL){
                     atual->dir = criarNodo(v);
                     atual->dir->pai =atual;
@@ -182,6 +234,15 @@ int main(){
                 atual = atual->pai;
             }
             mostraAtual(atual);
+            break;
+        case 10:
+            printf("\nBUSCANMDO EM LARGURA\n");
+                printf("VALOR: ");
+                scanf("%d", &v);
+                if(aux = buscaLarg(raiz, v)){
+                    printf("\nVALOR %d ENCONTRADO\n", aux->valor);
+                }else
+                    printf("\nVALOR NAO ESTA NA ARVORE");
             break;
         case 0:
             printf("SAIR\n");
