@@ -24,19 +24,19 @@ int fb(Nodo *p){
 
     if(p->esq)
         he = p->esq->h;
-    else   
+    else
         he = 0;
 
-    if(p->pai->dir)
-        he = p->dir->h;
-    else   
+    if(p->dir)
+        hd = p->dir->h;
+    else
         hd = 0;
 
     if(he>hd)
         p->h = he+1;
     else
         p->h = hd+1;
-    
+
     return he-hd;
 }
 
@@ -60,7 +60,6 @@ Nodo* inserirNodo(Nodo *raiz, int v){
     if(!raiz){
         raiz = criarNodo(v);
         fb(raiz);
-
     }else{
         if(v <= raiz->valor){
             raiz->esq = inserirNodo(raiz->esq,v);
@@ -72,7 +71,7 @@ Nodo* inserirNodo(Nodo *raiz, int v){
             fb(raiz->dir);
         }
     }
-    return raiz;
+    return raiz; 
 }
 
 Nodo* busca(Nodo *raiz, int v){
@@ -120,7 +119,7 @@ Nodo* excluir(Nodo *raiz, int v){
                 Nodo *menorDir = raiz->dir;
                 while(menorDir->esq)
                     menorDir = menorDir->esq;
-                
+
                 raiz->valor = menorDir->valor;
                 raiz->dir = excluir(raiz->dir, menorDir->valor);
             }
@@ -129,6 +128,63 @@ Nodo* excluir(Nodo *raiz, int v){
     }
     else
         return raiz;
+}
+
+Nodo* rotDir(Nodo *raiz){
+    Nodo *a = raiz, *b = raiz->esq, *c = raiz->esq->dir;
+    a->esq = c;
+    if(c)
+        c->pai = a;
+    b->pai = a->pai;
+    a->pai = b;
+    b->dir = a;
+    fb(a);
+    fb(b);
+    return b;
+}
+
+Nodo* rotEsq(Nodo *raiz){
+    Nodo *a = raiz, *b = raiz->dir, *c = raiz->dir->esq;
+    a->dir = c;
+    if(c)
+        c->pai = a;
+    b->pai = a->pai;
+    a->pai = b;
+    b->esq = a;
+    fb(a);
+    fb(b);
+    return b;
+}
+
+Nodo* rotEsqDir(Nodo *raiz){
+    raiz->esq = rotEsq(raiz->esq);
+    raiz = rotDir(raiz);
+    return raiz;
+}
+
+Nodo* rotDirEsq(Nodo *raiz){
+    raiz->dir = rotDir(raiz->dir);
+    raiz = rotEsq(raiz);
+    return raiz;
+}
+
+Nodo* balancear(Nodo *raiz){
+    int balR, balF;
+    balR = fb(raiz);
+    if(balR < -1){
+        balF = fb(raiz->dir);
+        if(balF <= 0)
+            raiz = rotEsq(raiz);
+        else
+            raiz = rotDirEsq(raiz);
+    }else if(balR > 1){
+        balF = fb(raiz->esq);
+        if(balF >= 0)
+            raiz = rotDir(raiz);
+        else
+            raiz = rotEsqDir(raiz);    
+    }
+    return raiz;
 }
 
 int main(){
@@ -150,7 +206,7 @@ int main(){
             printf("\nCriando novo nodo\n");
             printf("valor: ");
             scanf("%d",&v);
-            raiz = inserirNodo(raiz,v);
+            raiz = inserirNodo(raiz ,v);
             break;
 
         case 2:
@@ -166,7 +222,7 @@ int main(){
             else
                 printf("\nValor nao esta na arvore.\n");
             break;
-        
+
         case 4:
             printf("\nDigite um valor para excluir: ");
             scanf("%d", &v);
@@ -179,7 +235,7 @@ int main(){
             }
             else
                 printf("\nValor nao esta na arvore.\n");
-            
+
             mostraArvore(raiz, 0);
             break;
 
